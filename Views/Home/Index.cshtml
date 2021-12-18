@@ -1,0 +1,85 @@
+﻿<title>@ViewData["Title"] - Google Charts</title>  
+
+<script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>  
+  
+<div id="column_chart_div"></div>  
+<div id="line_chart_div"></div>  
+<div id="pie_chart_div"></div>  
+<div id="area_chart_div"></div>  
+<div id="bar_chart_div"></div>  
+
+<script type="text/javascript">  
+  
+    google.charts.load('current', {  
+        packages: ['corechart', 'bar']  
+    });  
+
+    google.charts.setOnLoadCallback(LoadData);  
+  
+    function LoadData() {  
+        $.ajax({  
+            url: '/Home/ChartData',  
+            dataType: "json",  
+            type: "GET",  
+            error: function(xhr, status, error) {  
+                toastr.error(xhr.responseText);  
+            },  
+            success: function(data) {  
+                PopulationChart(data, "column-chart");  
+                PopulationChart(data, "line-chart");  
+                PopulationChart(data, "pie-chart");  
+                PopulationChart(data, "area-chart"); 
+                PopulationChart(data, "bar-chart"); 
+                return false;  
+            }  
+        });  
+        return false;  
+    }  
+  
+    function PopulationChart(data, chart_type) {  
+        var dataArray = [  
+            ['Category', 'Product']  
+        ];  
+        $.each(data, function(i, item) {  
+            dataArray.push([item.name, item.count]);  
+        });  
+        var data = google.visualization.arrayToDataTable(dataArray);  
+        var options = {  
+            title: 'Product count by category',  
+            chartArea: {  
+                width: '80%'  
+            },  
+            colors: ['#b0120a', '#7b1fa2', '#ffab91', '#d95f02'],  
+            hAxis: {  
+                title: 'Categories',  
+                minValue: 0  
+            },  
+            vAxis: {  
+                title: 'Product Count'  
+            }  
+        };  
+        var chart;
+
+        switch(chart_type) {
+             case "line-chart":
+                chart = new google.visualization.LineChart(document.getElementById('line_chart_div'));  
+                break;
+           case "pie-chart":
+                chart = new google.visualization.PieChart(document.getElementById('pie_chart_div'));  
+                break;
+           case "area-chart":
+                chart = new google.visualization.AreaChart(document.getElementById('area_chart_div'));  
+                break;
+           case "bar-chart":
+                chart = new google.visualization.BarChart(document.getElementById('bar_chart_div'));  
+                break;
+
+            default:
+                chart = new google.visualization.ColumnChart(document.getElementById('column_chart_div'));  
+                break;
+        }
+
+        chart.draw(data, options);  
+        return false;  
+    }  
+</script>  
