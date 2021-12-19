@@ -46,18 +46,6 @@ public class HomeController : Controller
               .OrderByDescending(cp => cp.Count)
               .ToListAsync();
 
-        List<ChartType> chartList = new List<ChartType>();
-
-        foreach (var item in query)
-        {
-            chartList.Add(new ChartType()
-            {
-                Name = item.Name,
-                Count = item.Count
-            });
-        }
-
-
-        return Json(chartList);
+        return Json(query);
     }
 }
